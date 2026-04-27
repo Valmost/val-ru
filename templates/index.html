@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-4">Обработка PDF документа</h2>
+        <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="pdf_file" class="form-label">Выберите PDF файл</label>
+                <input type="file" class="form-control" id="pdf_file" name="pdf_file" accept=".pdf" required>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="width" class="form-label">Длина (int)</label>
+                    <input type="number" class="form-control" id="width" name="width" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="height" class="form-label">Ширина (int)</label>
+                    <input type="number" class="form-control" id="height" name="height" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="algorithm" class="form-label">Выберите алгоритм</label>
+                <select class="form-select" id="algorithm" name="algorithm" required>
+                    <option value="" selected disabled>Выберите алгоритм...</option>
+                    <option value="genetic">Genetic</option>
+                    <option value="shelf">Shelf</option>
+                    <option value="left-first-fit">Left-First-Fit</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success">Обработать и скачать</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
