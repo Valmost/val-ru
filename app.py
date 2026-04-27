@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from tools.pdf import *
 from pycking_test import *
 from io import BytesIO
+from api import api_bp
 import tempfile
 import os
 
@@ -12,6 +13,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here-change-in-production'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+app.register_blueprint(api_bp)
 
 db.init_app(app)
 login_manager = LoginManager()
@@ -24,7 +27,6 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-# Создание таблиц
 with app.app_context():
     db.create_all()
 
@@ -43,7 +45,6 @@ def signup():
         password = request.form.get('password')
         password_confirm = request.form.get('password_confirm')
 
-        # Валидация
         if not username or not email or not password:
             flash('Все поля обязательны для заполнения', 'danger')
             return redirect(url_for('signup'))
@@ -60,7 +61,6 @@ def signup():
             flash('Пользователь с такой почтой уже существует', 'danger')
             return redirect(url_for('signup'))
 
-        # Создание пользователя
         user = User(
             username=username,
             email=email,
@@ -118,12 +118,12 @@ def upload():
         flash('Пожалуйста, загрузите PDF файл', 'danger')
         return redirect(url_for('index'))
 
-    # Получение других данных формы
+    #Info
     width = request.form.get('width')
     height = request.form.get('height')
     algorithm = request.form.get('algorithm')
 
-    # Валидация числовых полей
+    #Check
     try:
         width = int(width)
         height = int(height)
@@ -135,7 +135,8 @@ def upload():
         flash('Неверный алгоритм', 'danger')
         return redirect(url_for('index'))
 
-    # Чтение файла в память (без сохранения на диск)
+    # ===================================
+    #FAKE DATA
     file_data = file.read()
 
     with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp_input:
@@ -148,13 +149,11 @@ def upload():
 
     with open(output_path, 'rb') as f:
         processed_data = f.read()
-    # ЗАГЛУШКА: Вместо реальной обработки просто возвращаем тот же файл
-    # В будущем здесь будет реальная логика изменения PDF
-    # Для демонстрации можно добавить watermark или что-то простое
+
     processed_pdf = BytesIO(processed_data)
 
-    # Можно добавить простую "обработку" - например, метаданные
-    # Но пока просто возвращаем как есть
+    # OVER
+    # ====================================
 
     return send_file(
         processed_pdf,
@@ -162,6 +161,11 @@ def upload():
         download_name=f'processed_{file.filename}',
         mimetype='application/pdf'
     )
+
+
+@app.route('/api-docs')
+def api_docs():
+    return render_template('api_docs.html')
 
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@ from turtle import *
 import fitz  # PyMuPDF
 import pymupdf
 
-def pypack(path, w, h, name='unnamed', copies=1, time_limit=5):
+def pypack(path, w, h, name='unnamed', copies=1, time_limit=1):
     polys=pdf_input(extract_shapes(path))
 
     b = InstanceBuilder(Objective.OPEN_DIMENSION_Y)

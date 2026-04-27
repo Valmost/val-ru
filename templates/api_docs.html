@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>REST API Документация</h2>
+        <p class="lead">API для программного доступа к обработке PDF</p>
+
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Авторизация</h5>
+            </div>
+            <div class="card-body">
+                <p>Все защищенные эндпоинты требуют заголовок:</p>
+                <pre><code>Authorization: Bearer ваш_токен</code></pre>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <span class="badge bg-success me-2">GET</span> /api/status
+            </div>
+            <div class="card-body">
+                <p>Проверка работоспособности API</p>
+                <button class="btn btn-sm btn-outline-primary" onclick="testEndpoint('GET', '/api/status')">
+                    Тестировать
+                </button>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <span class="badge bg-warning me-2">POST</span> /api/token
+            </div>
+            <div class="card-body">
+                <p>Получение токена</p>
+                <pre><code>{
+    "username": "ваш_логин",
+    "password": "ваш_пароль"
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <span class="badge bg-warning me-2">POST</span> /api/process
+                <span class="badge bg-danger">🔒 Требуется токен</span>
+            </div>
+            <div class="card-body">
+                <p>Обработка PDF (multipart/form-data)</p>
+                <pre><code>curl -X POST http://localhost:5000/api/process \
+  -H "Authorization: Bearer ваш_токен" \
+  -F "file=@документ.pdf" \
+  -F "width=100" \
+  -F "height=200" \
+  -F "algorithm=genetic" \
+  -o результат.pdf</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function testEndpoint(method, url) {
+    fetch(url, { method: method })
+        .then(r => r.json())
+        .then(data => alert(JSON.stringify(data, null, 2)))
+        .catch(e => alert('Ошибка: ' + e));
+}
+</script>
+{% endblock %}
